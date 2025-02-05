@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Birdhouse Valentine's Surprise</title>
+  <style>
+    /* Global Styles */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #ffe6e6; /* Soft pink background */
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Centered Birdhouse Container */
+    .birdhouse-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200px;
+      height: 300px;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      perspective: 1000px;
+      z-index: 2;
+    }
+    
+    /* The Overall Birdhouse */
+    .birdhouse {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: opacity 1s ease 1s;
+    }
+    
+    /* The Roof – A Symmetrical Triangle Using clip-path */
+    .roof {
+      width: 200px;
+      height: 80px;
+      background: #8B4513;  /* Wood-like brown */
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 3;
+    }
+    
+    /* Birdhouse Body */
+    .birdhouse-body {
+      position: absolute;
+      top: 80px;
+      width: 200px;
+      height: 220px;
+      background: #F5DEB3;  /* Light wooden tone */
+      border: 2px solid #A0522D;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+    
+    /* The Front Door (Circular) */
+    .door {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border: 2px solid #A0522D;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotateY(0deg);
+      transform-origin: left center;
+      transition: transform 1s ease;
+      z-index: 4;
+    }
+    
+    /* Little Doorknob on the Door */
+    .door::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #A0522D;
+      border-radius: 50%;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    /* A Perch Underneath the Door for Extra Realism */
+    .perch {
+      position: absolute;
+      width: 40px;
+      height: 6px;
+      background: #A0522D;
+      border-radius: 3px;
+      top: calc(50% + 35px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+    }
+    
+    /* When the Birdhouse is Clicked (Open State) */
+    .birdhouse-container.open .door {
+      transform: translate(-50%, -50%) rotateY(-90deg);
+    }
+    .birdhouse-container.open .birdhouse {
+      opacity: 0;
+    }
+    
+    /* Pop‑up Letter – Designed to Complement the Soft Background */
+    .letter {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0;
+      background: #fffafc;  /* Very light, almost white pink */
+      padding: 20px 30px;
+      border: 2px solid #ff8da1;
+      border-radius: 8px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+      transition: opacity 1s ease 1s, transform 1s ease 1s;
+      z-index: 10;
+      text-align: center;
+    }
+    .letter p {
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: #ff4d4d;
+    }
+    /* YES button styling */
+    .letter button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #ff4d4d;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .letter button:hover {
+      background-color: #e04343;
+    }
+    
+    /* Show the Letter When Body Has the 'open' Class */
+    body.open .letter {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    /* Scattered Images (Replace Placeholder URLs as Desired) */
+    .images {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9;
+    }
+    .pop-image {
+      position: absolute;
+      width: 150px;
+      opacity: 0;
+      transition: opacity 1s ease 1s, transform 1s ease 1s;
+    }
+    .pop-image.image1 {
+      top: 10%;
+      left: 10%;
+      transform: translate(-50px, -50px);
+    }
+    .pop-image.image2 {
+      top: 10%;
+      right: 10%;
+      transform: translate(50px, -50px);
+    }
+    .pop-image.image3 {
+      bottom: 10%;
+      left: 50%;
+      transform: translate(-50%, 50px);
+    }
+    body.open .pop-image {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+    
+    /* Slowly Moving Hearts in the Background */
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .heart {
+      position: absolute;
+      font-size: 24px;
+      color: #ff69b4;
+      opacity: 0.6;
+      animation: drift 10s ease-in-out infinite;
+    }
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(10px, -10px); }
+      100% { transform: translate(0, 0); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Birdhouse Section -->
+  <div class="birdhouse-container" id="birdhouse-container">
+    <div class="birdhouse">
+      <div class="roof"></div>
+      <div class="birdhouse-body">
+        <div class="door"></div>
+        <div class="perch"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Pop‑up Letter -->
+  <div class="letter" id="letter">
+    <p>Will you be my Valentine?</p>
+    <button id="yes-button">YES!</button>
+  </div>
+  
+  <!-- Scattered Images -->
+  <div class="images">
+    <img src="images/image1.jpeg" alt="image1" class="pop-image image1" />
+    <img src="images/image2.jpeg" alt="image2" class="pop-image image2" />
+    <img src="images/image3.jpeg" alt="image3" class="pop-image image3" />
+  </div>
+  
+  <!-- Slowly Moving Hearts -->
+  <div class="hearts">
+    <div class="heart" style="top: 20%; left: 30%;">&#10084;</div>
+    <div class="heart" style="top: 50%; left: 70%;">&#10084;</div>
+    <div class="heart" style="top: 80%; left: 40%;">&#10084;</div>
+  </div>
+  
+  <script>
+    // When the birdhouse is clicked, trigger the door opening and fade-out,
+    // then reveal the letter, button, and scattered images.
+    document.getElementById('birdhouse-container').addEventListener('click', function () {
+      this.classList.add('open');
+      document.body.classList.add('open');
+    });
+    
+    // When the YES button is clicked, navigate to the restaurants page.
+    document.getElementById('yes-button').addEventListener('click', function (e) {
+      e.stopPropagation();
+      window.location.href = 'Restaurant.html';
+    });
+  </script>
+</body>
+</html>
